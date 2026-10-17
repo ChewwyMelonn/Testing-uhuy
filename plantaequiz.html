@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Listening Quiz – Plantae & Animalia</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0;
+    background: radial-gradient(circle at top, #588157, #344e41);
+    color: #ffffff;
+}
+
+.container {
+    max-width: 900px;
+    margin: auto;
+    padding: 30px;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.quiz-box {
+    background: rgba(255,255,255,0.12);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 20px 45px rgba(0,0,0,0.4);
+}
+
+.timer {
+    text-align: right;
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #ffd166;
+}
+
+.question-number {
+    font-size: 1.1em;
+    margin-bottom: 15px;
+}
+
+.audio-btn {
+    display: block;
+    margin: 15px auto 25px;
+    background: #ffd166;
+    color: #344e41;
+    border: none;
+    padding: 14px 30px;
+    font-size: 1.1em;
+    border-radius: 40px;
+    cursor: pointer;
+}
+
+.audio-btn:hover {
+    background: #ffe39f;
+}
+
+.options label {
+    display: block;
+    background: rgba(255,255,255,0.18);
+    padding: 14px 18px;
+    margin-bottom: 14px;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.options label:hover {
+    background: rgba(255,255,255,0.3);
+}
+
+.options input {
+    margin-right: 10px;
+}
+
+button.next {
+    background: #fefae0;
+    color: #344e41;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 30px;
+    font-size: 1em;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.result {
+    text-align: center;
+    font-size: 1.4em;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>Listening Quiz</h1>
+        <p>Plantae & Animalia – Biology</p>
+    </div>
+
+    <div class="quiz-box" id="quizBox">
+        <div class="timer" id="timer">Time: 45</div>
+        <div class="question-number" id="qNumber"></div>
+
+        <button class="audio-btn" onclick="playAudio()">🔊 Play Question Audio</button>
+
+        <div class="options" id="options"></div>
+
+        <button class="next" onclick="nextQuestion()">Next</button>
+    </div>
+</div>
+
+<script>
+const questions = [
+{
+q: "The main characteristic that distinguishes the Kingdom Plantae from the Kingdom Animalia is what?",
+a: [
+"Having body organs",
+"Being heterotrophic",
+"Having chlorophyll and carrying out photosynthesis",
+"Being motile"
+],
+c: 2
+},
+{
+q: "An example of a liverwort is what?",
+a: [
+"Sphagnum",
+"Anthoceros",
+"Marchantia polymorpha",
+"Selaginella"
+],
+c: 2
+},
+{
+q: "The following is a true fern.",
+a: [
+"Equisetum",
+"Selaginella",
+"Adiantum cuneatum",
+"Rhynia"
+],
+c: 2
+},
+{
+q: "The characteristic of Gymnosperms is what?",
+a: [
+"Having true flowers",
+"Seeds protected by fruit",
+"Reproductive organs in the form of strobili",
+"Having leaves width"
+],
+c: 2
+},
+{
+q: "An example of a dicotyledonous plant is what?",
+a: [
+"Rice",
+"Coconut",
+"Orchid",
+"Tomato"
+],
+c: 3
+},
+{
+q: "The Animalia kingdom is heterotrophic because what?",
+a: [
+"It has no body organs",
+"It cannot produce its own food",
+"It does not have a nucleus",
+"It cannot move"
+],
+c: 1
+},
+{
+q: "Animals with porous bodies, live in water, and are hermaphroditic belong to which phylum?",
+a: [
+"Coelenterata",
+"Porifera",
+"Mollusca",
+"Echinodermata"
+],
+c: 1
+},
+{
+q: "Animals with jointed legs and a chitinous exoskeleton belong to which phylum?",
+a: [
+"Annelida",
+"Mollusca",
+"Arthropoda",
+"Nemathelminthes"
+],
+c: 2
+},
+{
+q: "Animals that live in two worlds and undergo complete metamorphosis belong to which class?",
+a: [
+"Pisces",
+"Reptilia",
+"Amphibia",
+"Aves"
+],
+c: 2
+},
+{
+q: "A characteristic of mammals that other vertebrate classes do not have is what?",
+a: [
+"Lay eggs",
+"Covered in scales",
+"Have mammary glands",
+"Breathe with lungs"
+],
+c: 2
+}
+];
+
+let index = 0;
+let score = 0;
+let time = 45;
+let timer;
+
+function playAudio() {
+    speechSynthesis.cancel();
+    const utter = new SpeechSynthesisUtterance(questions[index].q);
+    utter.lang = "en-US";
+    utter.rate = 0.9;
+    speechSynthesis.speak(utter);
+}
+
+function loadQuestion() {
+    clearInterval(timer);
+    time = 45;
+    document.getElementById("timer").innerText = "Time: " + time;
+    document.getElementById("qNumber").innerText =
+        `Question ${index + 1} of ${questions.length}`;
+
+    const optionsDiv = document.getElementById("options");
+    optionsDiv.innerHTML = "";
+
+    questions[index].a.forEach((opt, i) => {
+        optionsDiv.innerHTML += `
+        <label>
+            <input type="radio" name="option" value="${i}">
+            ${opt}
+        </label>`;
+    });
+
+    playAudio();
+
+    timer = setInterval(() => {
+        time--;
+        document.getElementById("timer").innerText = "Time: " + time;
+        if (time === 0) nextQuestion();
+    }, 1000);
+}
+
+function nextQuestion() {
+    clearInterval(timer);
+    const selected = document.querySelector('input[name="option"]:checked');
+    if (selected && parseInt(selected.value) === questions[index].c) {
+        score++;
+    }
+    index++;
+
+    if (index < questions.length) {
+        loadQuestion();
+    } else {
+        document.getElementById("quizBox").innerHTML = `
+        <div class="result">
+            <h2>Quiz Completed</h2>
+            <p>Your Score: ${score} / ${questions.length}</p>
+            <p>Accuracy: ${(score / questions.length * 100).toFixed(1)}%</p>
+        </div>`;
+    }
+}
+
+loadQuestion();
+</script>
+
+</body>
+</html>

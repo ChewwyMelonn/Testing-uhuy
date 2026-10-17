@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Listening Quiz – Biodiversity</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0;
+    background: radial-gradient(circle at top, #2a9d8f, #264653);
+    color: #ffffff;
+}
+
+.container {
+    max-width: 900px;
+    margin: auto;
+    padding: 30px;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.quiz-box {
+    background: rgba(255,255,255,0.12);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 20px 45px rgba(0,0,0,0.4);
+}
+
+.timer {
+    text-align: right;
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #f4a261;
+}
+
+.question-number {
+    font-size: 1.1em;
+    margin-bottom: 15px;
+}
+
+.audio-btn {
+    display: block;
+    margin: 15px auto 25px;
+    background: #e9c46a;
+    color: #264653;
+    border: none;
+    padding: 14px 30px;
+    font-size: 1.1em;
+    border-radius: 40px;
+    cursor: pointer;
+}
+
+.audio-btn:hover {
+    background: #f1d98a;
+}
+
+.options label {
+    display: block;
+    background: rgba(255,255,255,0.18);
+    padding: 14px 18px;
+    margin-bottom: 14px;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.options label:hover {
+    background: rgba(255,255,255,0.3);
+}
+
+.options input {
+    margin-right: 10px;
+}
+
+button.next {
+    background: #f4f1de;
+    color: #264653;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 30px;
+    font-size: 1em;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.result {
+    text-align: center;
+    font-size: 1.4em;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>Listening Quiz</h1>
+        <p>Biodiversity – Biology Grade 10</p>
+    </div>
+
+    <div class="quiz-box" id="quizBox">
+        <div class="timer" id="timer">Time: 45</div>
+        <div class="question-number" id="qNumber"></div>
+
+        <button class="audio-btn" onclick="playAudio()">🔊 Play Question Audio</button>
+
+        <div class="options" id="options"></div>
+
+        <button class="next" onclick="nextQuestion()">Next</button>
+    </div>
+</div>
+
+<script>
+const questions = [
+{
+q: "The following is an example of diversity at the genetic level.",
+a: [
+"Differences between rainforest and savanna types",
+"Differences in rose flower color within a single species",
+"Differences between rice and corn",
+"Differences between fish and frogs"
+],
+c: 1
+},
+{
+q: "The main cause of the increased risk of flooding and landslides due to deforestation is what?",
+a: [
+"Decreasing animal numbers",
+"Decreasing air quality",
+"Loss of water absorption capacity by the soil",
+"Increasing global temperatures"
+],
+c: 2
+},
+{
+q: "Species that can live in various habitats and have a varied diet are called what?",
+a: [
+"Endemic species",
+"Indicator species",
+"Specialist species",
+"Generalist species"
+],
+c: 3
+},
+{
+q: "Examples of fauna typical of the Australian region of Indonesia are what?",
+a: [
+"Elephants and tigers",
+"Komodo dragons and anoas",
+"Tree kangaroos and birds of paradise",
+"Orangutans and tapirs"
+],
+c: 2
+},
+{
+q: "HIPPCO is a framework used to explain what?",
+a: [
+"Economic benefits of biodiversity",
+"Levels of biodiversity",
+"Factors causing biodiversity decline",
+"Classification system for living things"
+],
+c: 2
+},
+{
+q: "Mangroves and seagrass meadows are included in which ecosystem type?",
+a: [
+"Freshwater",
+"Terrestrial",
+"Deep sea",
+"Brackish"
+],
+c: 3
+},
+{
+q: "Indonesia is called a mega biodiversity country because what?",
+a: [
+"It has a vast marine area",
+"It has a large population",
+"It has high diversity and endemism",
+"It has many industrial areas"
+],
+c: 2
+},
+{
+q: "Organisms whose presence can be used as indicators of environmental conditions are called what?",
+a: [
+"Foundation species",
+"Indicator species",
+"Invasive species",
+"Endemic species"
+],
+c: 1
+},
+{
+q: "Conservation through zoos and botanical gardens is a type of conservation called what?",
+a: [
+"In situ",
+"Natural",
+"Artificial",
+"Ex situ"
+],
+c: 3
+},
+{
+q: "A classification system that uses genetic and fossil data is called what system?",
+a: [
+"Artificial",
+"Natural",
+"Morphological",
+"Phylogenetics"
+],
+c: 3
+}
+];
+
+let index = 0;
+let score = 0;
+let time = 45;
+let timer;
+
+function playAudio() {
+    speechSynthesis.cancel();
+    const utter = new SpeechSynthesisUtterance(questions[index].q);
+    utter.lang = "en-US";
+    utter.rate = 0.9;
+    speechSynthesis.speak(utter);
+}
+
+function loadQuestion() {
+    clearInterval(timer);
+    time = 45;
+    document.getElementById("timer").innerText = "Time: " + time;
+    document.getElementById("qNumber").innerText =
+        `Question ${index + 1} of ${questions.length}`;
+
+    const optionsDiv = document.getElementById("options");
+    optionsDiv.innerHTML = "";
+
+    questions[index].a.forEach((opt, i) => {
+        optionsDiv.innerHTML += `
+        <label>
+            <input type="radio" name="option" value="${i}">
+            ${opt}
+        </label>`;
+    });
+
+    playAudio();
+
+    timer = setInterval(() => {
+        time--;
+        document.getElementById("timer").innerText = "Time: " + time;
+        if (time === 0) nextQuestion();
+    }, 1000);
+}
+
+function nextQuestion() {
+    clearInterval(timer);
+    const selected = document.querySelector('input[name="option"]:checked');
+    if (selected && parseInt(selected.value) === questions[index].c) {
+        score++;
+    }
+    index++;
+
+    if (index < questions.length) {
+        loadQuestion();
+    } else {
+        document.getElementById("quizBox").innerHTML = `
+        <div class="result">
+            <h2>Quiz Completed</h2>
+            <p>Your Score: ${score} / ${questions.length}</p>
+            <p>Accuracy: ${(score / questions.length * 100).toFixed(1)}%</p>
+        </div>`;
+    }
+}
+
+loadQuestion();
+</script>
+
+</body>
+</html>

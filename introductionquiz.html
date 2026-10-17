@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Listening Quiz – Introduction to Biology</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0;
+    background: radial-gradient(circle at top, #1d3557, #0b132b);
+    color: #ffffff;
+}
+
+.container {
+    max-width: 900px;
+    margin: auto;
+    padding: 30px;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.quiz-box {
+    background: rgba(255,255,255,0.12);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 20px 45px rgba(0,0,0,0.4);
+}
+
+.timer {
+    text-align: right;
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #ffd166;
+}
+
+.question-number {
+    font-size: 1.1em;
+    margin-bottom: 15px;
+}
+
+.audio-btn {
+    display: block;
+    margin: 15px auto 25px;
+    background: #a8dadc;
+    color: #081c15;
+    border: none;
+    padding: 14px 30px;
+    font-size: 1.1em;
+    border-radius: 40px;
+    cursor: pointer;
+}
+
+.audio-btn:hover {
+    background: #cdeaea;
+}
+
+.options label {
+    display: block;
+    background: rgba(255,255,255,0.18);
+    padding: 14px 18px;
+    margin-bottom: 14px;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.options label:hover {
+    background: rgba(255,255,255,0.3);
+}
+
+.options input {
+    margin-right: 10px;
+}
+
+button.next {
+    background: #f1faee;
+    color: #081c15;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 30px;
+    font-size: 1em;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.result {
+    text-align: center;
+    font-size: 1.4em;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>Listening Quiz</h1>
+        <p>Introduction to Biology – Grade 10</p>
+    </div>
+
+    <div class="quiz-box" id="quizBox">
+        <div class="timer" id="timer">Time: 45</div>
+        <div class="question-number" id="qNumber"></div>
+
+        <button class="audio-btn" onclick="playAudio()">🔊 Play Question Audio</button>
+
+        <div class="options" id="options"></div>
+
+        <button class="next" onclick="nextQuestion()">Next</button>
+    </div>
+</div>
+
+<script>
+const questions = [
+{
+q: "The following statement that best describes biology as a science is which option?",
+a: [
+"The science that studies inanimate objects in nature",
+"The science that studies life and all its processes",
+"The science that studies chemical reactions in general",
+"The science that studies human social phenomena"
+],
+c: 1
+},
+{
+q: "The development of modern biology, which emphasizes molecular structure and function, occurred due to what factor?",
+a: [
+"The discovery of the theory of evolution",
+"The use of descriptive methods",
+"The development of advanced laboratory technology",
+"Macroscopic observation"
+],
+c: 2
+},
+{
+q: "The branch of biology that applies principles of physics to study life processes is called what?",
+a: [
+"Biochemistry",
+"Bioinformatics",
+"Biotechnology",
+"Biophysics"
+],
+c: 3
+},
+{
+q: "What is the correct order of levels of biological organization from simple to complex?",
+a: [
+"Cells, molecules, tissues, organs",
+"Molecules, cells, tissues, organs",
+"Tissues, cells, molecules, organs",
+"Organs, tissues, cells, molecules"
+],
+c: 1
+},
+{
+q: "A group of individuals of the same species living in the same place and time is called what?",
+a: [
+"Community",
+"Ecosystem",
+"Population",
+"Biome"
+],
+c: 2
+},
+{
+q: "Which of the following is a biological problem at the ecosystem level?",
+a: [
+"Leukemia",
+"Plasmolysis",
+"Illegal logging",
+"AIDS"
+],
+c: 2
+},
+{
+q: "In the scientific method, what is the first step before conducting an experiment?",
+a: [
+"Drawing conclusions",
+"Making observations",
+"Analyzing data",
+"Writing a report"
+],
+c: 1
+},
+{
+q: "The scientific attitude that requires researchers to present data based strictly on facts is called what?",
+a: [
+"Creative",
+"Objective",
+"Disciplined",
+"Collaborative"
+],
+c: 1
+},
+{
+q: "What is the main function of wearing gloves in the laboratory?",
+a: [
+"Maintaining cleanliness of the room",
+"Protecting hands from hazardous materials",
+"Making it easier to handle glassware",
+"Avoiding equipment noise"
+],
+c: 1
+},
+{
+q: "The application of biology in developing environmentally friendly energy is shown by the use of what?",
+a: [
+"Uranium",
+"Coal",
+"Biogas",
+"Petroleum"
+],
+c: 2
+}
+];
+
+let index = 0;
+let score = 0;
+let time = 45;
+let timer;
+
+function playAudio() {
+    speechSynthesis.cancel();
+    const utter = new SpeechSynthesisUtterance(questions[index].q);
+    utter.lang = "en-US";
+    utter.rate = 0.9;
+    speechSynthesis.speak(utter);
+}
+
+function loadQuestion() {
+    clearInterval(timer);
+    time = 45;
+    document.getElementById("timer").innerText = "Time: " + time;
+    document.getElementById("qNumber").innerText =
+        `Question ${index + 1} of ${questions.length}`;
+
+    const optionsDiv = document.getElementById("options");
+    optionsDiv.innerHTML = "";
+
+    questions[index].a.forEach((opt, i) => {
+        optionsDiv.innerHTML += `
+        <label>
+            <input type="radio" name="option" value="${i}">
+            ${opt}
+        </label>`;
+    });
+
+    playAudio();
+
+    timer = setInterval(() => {
+        time--;
+        document.getElementById("timer").innerText = "Time: " + time;
+        if (time === 0) nextQuestion();
+    }, 1000);
+}
+
+function nextQuestion() {
+    clearInterval(timer);
+    const selected = document.querySelector('input[name="option"]:checked');
+    if (selected && parseInt(selected.value) === questions[index].c) {
+        score++;
+    }
+    index++;
+
+    if (index < questions.length) {
+        loadQuestion();
+    } else {
+        document.getElementById("quizBox").innerHTML = `
+        <div class="result">
+            <h2>Quiz Completed</h2>
+            <p>Your Score: ${score} / ${questions.length}</p>
+            <p>Accuracy: ${(score / questions.length * 100).toFixed(1)}%</p>
+        </div>`;
+    }
+}
+
+loadQuestion();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Listening Quiz – Fungi & Protista</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0;
+    background: radial-gradient(circle at top, #6a994e, #386641);
+    color: #ffffff;
+}
+
+.container {
+    max-width: 900px;
+    margin: auto;
+    padding: 30px;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.quiz-box {
+    background: rgba(255,255,255,0.15);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 20px 45px rgba(0,0,0,0.4);
+}
+
+.timer {
+    text-align: right;
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #ffd166;
+}
+
+.question-number {
+    font-size: 1.1em;
+    margin-bottom: 15px;
+}
+
+.audio-btn {
+    display: block;
+    margin: 15px auto 25px;
+    background: #ffd166;
+    color: #386641;
+    border: none;
+    padding: 14px 30px;
+    font-size: 1.1em;
+    border-radius: 40px;
+    cursor: pointer;
+}
+
+.audio-btn:hover {
+    background: #ffe39f;
+}
+
+.options label {
+    display: block;
+    background: rgba(255,255,255,0.18);
+    padding: 14px 18px;
+    margin-bottom: 14px;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.options label:hover {
+    background: rgba(255,255,255,0.3);
+}
+
+.options input {
+    margin-right: 10px;
+}
+
+button.next {
+    background: #fefae0;
+    color: #386641;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 30px;
+    font-size: 1em;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.result {
+    text-align: center;
+    font-size: 1.4em;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>Listening Quiz</h1>
+        <p>Fungi & Protista – Biology</p>
+    </div>
+
+    <div class="quiz-box" id="quizBox">
+        <div class="timer" id="timer">Time: 45</div>
+        <div class="question-number" id="qNumber"></div>
+
+        <button class="audio-btn" onclick="playAudio()">🔊 Play Question Audio</button>
+
+        <div class="options" id="options"></div>
+
+        <button class="next" onclick="nextQuestion()">Next</button>
+    </div>
+</div>
+
+<script>
+const questions = [
+{
+q: "The main reason protists are called transitional organisms is because what?",
+a: [
+"They live in all habitats",
+"They are always microscopic",
+"They have characteristics that combine animals plants and fungi",
+"They lack cell walls"
+],
+c: 2
+},
+{
+q: "Protozoa that move using cilia are what?",
+a: [
+"Amoeba",
+"Paramecium",
+"Trypanosoma",
+"Plasmodium"
+],
+c: 1
+},
+{
+q: "The group of algae that plays a major role as primary producers in water and produces oxygen is what?",
+a: [
+"Red algae",
+"Brown algae",
+"Green algae",
+"Parasitic algae"
+],
+c: 2
+},
+{
+q: "Fungus like protists that are detrimental to agriculture because they attack plants are what?",
+a: [
+"Myxomycota",
+"Acrasiomycota",
+"Oomycota",
+"Chrysophyta"
+],
+c: 2
+},
+{
+q: "The main role of protists in aquatic ecosystems is as what?",
+a: [
+"Top consumers",
+"Producers and oxygen producers",
+"Primary decomposers",
+"Large predators"
+],
+c: 1
+},
+{
+q: "Fungi obtain food by what method?",
+a: [
+"Photosynthesis",
+"Ingesting food",
+"Absorption after extracellular digestion",
+"Producing chlorophyll"
+],
+c: 2
+},
+{
+q: "The fungi used in making bread and fermented drinks are what?",
+a: [
+"Rhizopus",
+"Aspergillus",
+"Saccharomyces",
+"Basidiomycota"
+],
+c: 2
+},
+{
+q: "The fungi that produce the antibiotic penicillin come from which group?",
+a: [
+"Zygomycota",
+"Ascomycota",
+"Basidiomycota",
+"Deuteromycota"
+],
+c: 1
+},
+{
+q: "The symbiosis between fungi and plant roots that helps mineral absorption is called what?",
+a: [
+"Lichen",
+"Parasitism",
+"Mycorrhiza",
+"Commensalism"
+],
+c: 2
+},
+{
+q: "The group of fungi whose sexual phase is unknown and which only reproduces asexually is what?",
+a: [
+"Zygomycota",
+"Ascomycota",
+"Basidiomycota",
+"Deuteromycota"
+],
+c: 3
+}
+];
+
+let index = 0;
+let score = 0;
+let time = 45;
+let timer;
+
+function playAudio() {
+    speechSynthesis.cancel();
+    const utter = new SpeechSynthesisUtterance(questions[index].q);
+    utter.lang = "en-US";
+    utter.rate = 0.9;
+    speechSynthesis.speak(utter);
+}
+
+function loadQuestion() {
+    clearInterval(timer);
+    time = 45;
+    document.getElementById("timer").innerText = "Time: " + time;
+    document.getElementById("qNumber").innerText =
+        `Question ${index + 1} of ${questions.length}`;
+
+    const optionsDiv = document.getElementById("options");
+    optionsDiv.innerHTML = "";
+
+    questions[index].a.forEach((opt, i) => {
+        optionsDiv.innerHTML += `
+        <label>
+            <input type="radio" name="option" value="${i}">
+            ${opt}
+        </label>`;
+    });
+
+    playAudio();
+
+    timer = setInterval(() => {
+        time--;
+        document.getElementById("timer").innerText = "Time: " + time;
+        if (time === 0) nextQuestion();
+    }, 1000);
+}
+
+function nextQuestion() {
+    clearInterval(timer);
+    const selected = document.querySelector('input[name="option"]:checked');
+    if (selected && parseInt(selected.value) === questions[index].c) {
+        score++;
+    }
+    index++;
+
+    if (index < questions.length) {
+        loadQuestion();
+    } else {
+        document.getElementById("quizBox").innerHTML = `
+        <div class="result">
+            <h2>Quiz Completed</h2>
+            <p>Your Score: ${score} / ${questions.length}</p>
+            <p>Accuracy: ${(score / questions.length * 100).toFixed(1)}%</p>
+        </div>`;
+    }
+}
+
+loadQuestion();
+</script>
+
+</body>
+</html>
+

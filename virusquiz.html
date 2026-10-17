@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Listening Quiz – Virus</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0;
+    background: radial-gradient(circle at top, #3a0ca3, #03045e);
+    color: #ffffff;
+}
+
+.container {
+    max-width: 900px;
+    margin: auto;
+    padding: 30px;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.quiz-box {
+    background: rgba(255,255,255,0.12);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 20px 45px rgba(0,0,0,0.4);
+}
+
+.timer {
+    text-align: right;
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #ffd166;
+}
+
+.question-number {
+    font-size: 1.1em;
+    margin-bottom: 15px;
+}
+
+.audio-btn {
+    display: block;
+    margin: 15px auto 25px;
+    background: #bdb2ff;
+    color: #03045e;
+    border: none;
+    padding: 14px 30px;
+    font-size: 1.1em;
+    border-radius: 40px;
+    cursor: pointer;
+}
+
+.audio-btn:hover {
+    background: #d0caff;
+}
+
+.options label {
+    display: block;
+    background: rgba(255,255,255,0.18);
+    padding: 14px 18px;
+    margin-bottom: 14px;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.options label:hover {
+    background: rgba(255,255,255,0.3);
+}
+
+.options input {
+    margin-right: 10px;
+}
+
+button.next {
+    background: #f1f1ff;
+    color: #03045e;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 30px;
+    font-size: 1em;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.result {
+    text-align: center;
+    font-size: 1.4em;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>Listening Quiz</h1>
+        <p>Virus – Biology Grade 10</p>
+    </div>
+
+    <div class="quiz-box" id="quizBox">
+        <div class="timer" id="timer">Time: 45</div>
+        <div class="question-number" id="qNumber"></div>
+
+        <button class="audio-btn" onclick="playAudio()">🔊 Play Question Audio</button>
+
+        <div class="options" id="options"></div>
+
+        <button class="next" onclick="nextQuestion()">Next</button>
+    </div>
+</div>
+
+<script>
+const questions = [
+{
+q: "The reason viruses are not classified as fully living things is because viruses cannot reproduce without a host cell.",
+a: [
+"Do not have genetic material",
+"Cannot reproduce without a host cell",
+"Are very small",
+"Do not have a capsid"
+],
+c: 1
+},
+{
+q: "Viruses are considered transitional objects between living and nonliving things because they can be crystallized but can also reproduce.",
+a: [
+"Can move freely",
+"Have a cell nucleus",
+"Can be crystallized but can also reproduce",
+"Always cause disease"
+],
+c: 2
+},
+{
+q: "Which part of the virus functions to protect the nucleic acid?",
+a: [
+"Nucleus",
+"Envelope",
+"Capsid",
+"Tail"
+],
+c: 2
+},
+{
+q: "The stage in the lysogenic cycle when the virus does not damage the host cell is called the integration stage.",
+a: [
+"Lysis",
+"Penetration",
+"Integration",
+"Adsorption"
+],
+c: 2
+},
+{
+q: "The main difference between the lytic and lysogenic cycles is the time of host cell destruction.",
+a: [
+"Type of virus",
+"Ability of the virus to attach",
+"Time of host cell destruction",
+"Shape of the capsid"
+],
+c: 2
+},
+{
+q: "Tungro disease in rice plants is transmitted through leafhoppers.",
+a: [
+"Mosquitoes",
+"Rats",
+"Aphids",
+"Leafhoppers"
+],
+c: 3
+},
+{
+q: "RNA viruses mutate more easily than DNA viruses because they do not have error repair mechanisms.",
+a: [
+"Viruses are smaller",
+"Do not have capsids",
+"Do not have error repair mechanisms",
+"Only live in animal cells"
+],
+c: 2
+},
+{
+q: "One use of viruses in the health sector is vaccine production.",
+a: [
+"Antibiotic production",
+"Vaccine production",
+"Food fermentation",
+"Artificial photosynthesis"
+],
+c: 1
+},
+{
+q: "The disease caused by Orthomyxovirus is influenza.",
+a: [
+"Polio",
+"Influenza",
+"Hepatitis B",
+"AIDS"
+],
+c: 1
+},
+{
+q: "Polio virus can be prevented by oral vaccination.",
+a: [
+"Avoiding oily foods",
+"Administering antibiotics",
+"Oral vaccination",
+"Radiation therapy"
+],
+c: 2
+}
+];
+
+let index = 0;
+let score = 0;
+let time = 45;
+let timer;
+
+function playAudio() {
+    speechSynthesis.cancel();
+    const utter = new SpeechSynthesisUtterance(questions[index].q);
+    utter.lang = "en-US";
+    utter.rate = 0.9;
+    speechSynthesis.speak(utter);
+}
+
+function loadQuestion() {
+    clearInterval(timer);
+    time = 45;
+    document.getElementById("timer").innerText = "Time: " + time;
+    document.getElementById("qNumber").innerText =
+        `Question ${index + 1} of ${questions.length}`;
+
+    const optionsDiv = document.getElementById("options");
+    optionsDiv.innerHTML = "";
+
+    questions[index].a.forEach((opt, i) => {
+        optionsDiv.innerHTML += `
+        <label>
+            <input type="radio" name="option" value="${i}">
+            ${opt}
+        </label>`;
+    });
+
+    playAudio();
+
+    timer = setInterval(() => {
+        time--;
+        document.getElementById("timer").innerText = "Time: " + time;
+        if (time === 0) nextQuestion();
+    }, 1000);
+}
+
+function nextQuestion() {
+    clearInterval(timer);
+    const selected = document.querySelector('input[name="option"]:checked');
+    if (selected && parseInt(selected.value) === questions[index].c) {
+        score++;
+    }
+    index++;
+
+    if (index < questions.length) {
+        loadQuestion();
+    } else {
+        document.getElementById("quizBox").innerHTML = `
+        <div class="result">
+            <h2>Quiz Completed</h2>
+            <p>Your Score: ${score} / ${questions.length}</p>
+            <p>Accuracy: ${(score / questions.length * 100).toFixed(1)}%</p>
+        </div>`;
+    }
+}
+
+loadQuestion();
+</script>
+
+</body>
+</html>
